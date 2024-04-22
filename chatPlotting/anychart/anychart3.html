@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.anychart.com/releases/8.11.0/css/anychart-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.anychart.com/releases/8.11.0/fonts/css/anychart-font.min.css" rel="stylesheet" type="text/css">  
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-stock.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-data-adapter.min.js"></script>
+    <style>
+        html,body,#container{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <label for="csvFile">Select CSV File:</label>
+        <input type="file" id="csvFile" accept=".csv">
+    </div>
+    <div>
+        <label for="stockName">Enter Stock Name:</label>
+        <input type="text" id="stockName">
+    </div>
+    <div>
+        <label for="chartTitle">Chart Title:</label>
+        <input type="text" id="chartTitle">
+    </div>
+    <div>
+        <label for="enableGrid">Enable Grid Lines:</label>
+        <input type="checkbox" id="enableGrid">
+    </div>
+    <div>
+        <label for="enableLegend">Show Legend:</label>
+        <input type="checkbox" id="enableLegend">
+    </div>
+    <div>
+        <label for="enableRangeSelector">Show Range Selector:</label>
+        <input type="checkbox" id="enableRangeSelector">
+    </div>
+    <div>
+        <label for="theme">Chart Theme:</label>
+        <select id="theme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+        </select>
+    </div>
+    <button onclick="loadData()">Load Data</button>
+    <div id="container"></div>
+
+
+
+    <script>
+        function loadData(){
+            var fileInput = document.getElementById('csvFile');
+            var stockName = document.getElementById('stockName').value;
+            var chartTitle = document.getElementById('chartTitle').value;
+            var enableGrid = document.getElementById('enableGrid').checked;
+            var enableLegend = document.getElementById('enableLegend').checked;
+            var enableRangeSelector = document.getElementById('enableRangeSelector').checked;
+            var theme = document.getElementById('theme').value;
+
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(event){
+                var data = event.target.result;
+
+                var dataTable = anychart.data.table();
+                dataTable.addData(data);
+
+                var mapping = dataTable.mapAs({
+                    open: 1,
+                    high: 2,
+                    low: 3,
+                    close: 4
+                });
+
+
+                var chart = anychart.stock();
+                var plot = chart.plot(0);
+
+                if(enableGrid){
+                    plot.yGrid(true)
+                    .xGrid(true)
+                    .yMinorGrid(true)
+                    .xMinorGrid(true)
+                }
+
+
+                var series = plot.candlestick(mapping);
+                series.name(stockName);
+                series.legendItem().iconType('rising-falling');
+
+                chart.title(chartTitle + ' Stock Chart');
+                chart.container('container');
+
+                // chart.legend().enable(enableLegend);
+
+                chart.rangeSelector().enabled(enableRangeSelector);
+
+                if(theme === 'dark')
+                    anychart.theme(anychart.themes.dark);
+                else
+                    anychart.theme(anychart.themes.light);
+
+                chart.draw();
+
+            }
+
+            reader.readAsText(file)
+        }
+    </script>
+
+</body>
+</html>

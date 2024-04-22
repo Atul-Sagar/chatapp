@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+    <div id="chart"></div>
+    <input type="file" id="fileInput" accept=".csv">
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event){
+            var file = event.target.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function(e){
+                var data = e.target.result;
+
+                var parsedData = Plotly.d3.csv.parse(data);
+
+                var dates = []
+                var open = []
+                var high = []
+                var low = []
+                var close = []
+
+                parsedData.forEach(function(d){
+                    dates.push(d['Date ']);
+                    open.push(parseFloat(d['OPEN ']));
+                    high.push(parseFloat(d['HIGH ']));
+                    low.push(parseFloat(d['LOW ']));
+                    close.push(parseFloat(d['close ']));
+                });
+
+                var trace = {
+                    x : dates,
+                    close : close,
+                    high : high,
+                    low : low,
+                    open : open,
+                    type : 'Candlestick',
+                    name : 'Candlestick Chart'
+                }
+
+                var layout = {
+                    title: 'Candlestick Chart',
+                    xaxis : {
+                        title: 'Date'
+                    },
+                    yaxis: {
+                        title: 'Price'
+                    }
+                };
+
+                Plotly.newPlot('chart', [trace], layout)
+            };
+
+            reader.readAsText(file);
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.anychart.com/releases/8.11.0/css/anychart-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.anychart.com/releases/8.11.0/fonts/css/anychart-font.min.css" rel="stylesheet" type="text/css">  
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-core.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-stock.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/8.11.0/js/anychart-data-adapter.min.js"></script>
+    <style>
+        html,body,#container{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        anychart.data.loadCsvFile('data.csv', function(data){
+            var dataTable = anychart.data.table();
+            dataTable.addData(data);
+            
+            var mapping = dataTable.mapAs({
+                open: 1,
+                high: 2,
+                low: 3,
+                close: 4
+            });
+
+            var chart = anychart.stock();
+            var plot = chart.plot(0);
+
+            plot
+                .yGrid(true)
+                .xGrid(true)
+                .yMinorGrid(true)
+                .xMinorGrid(true);
+
+            var series = plot.candlestick(mapping);
+            series.name('TSMC');
+            series.legendItem().iconType('rising-falling');
+            
+
+            chart.title('TSMC Stock Chart');
+            chart.container('container');
+
+            chart.draw();
+        });
+    </script>
+</body>
+</html>
