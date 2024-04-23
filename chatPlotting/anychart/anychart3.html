@@ -57,6 +57,7 @@
 
     <script>
         function loadData(){
+            console.log('Loading data...');
             var fileInput = document.getElementById('csvFile');
             var stockName = document.getElementById('stockName').value;
             var chartTitle = document.getElementById('chartTitle').value;
@@ -69,6 +70,7 @@
             var reader = new FileReader();
 
             reader.onload = function(event){
+                console.log('Data loaded successfully');
                 var data = event.target.result;
 
                 var dataTable = anychart.data.table();
@@ -102,14 +104,19 @@
 
                 // chart.legend().enable(enableLegend);
 
-                chart.rangeSelector().enabled(enableRangeSelector);
+                if (typeof chart.rangeSelector === 'function')
+                    chart.rangeSelector().enabled(enableRangeSelector)
+
+                // chart.rangeSelector().enabled(enableRangeSelector);
 
                 if(theme === 'dark')
                     anychart.theme(anychart.themes.dark);
                 else
                     anychart.theme(anychart.themes.light);
 
+                console.log('Drawing chart...');
                 chart.draw();
+                console.log('Chart drawn successfully');
 
             }
 
